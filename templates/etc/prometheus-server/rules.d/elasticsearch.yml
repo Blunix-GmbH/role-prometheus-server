@@ -1,0 +1,82 @@
+groups:
+
+  - name: elasticsearch
+    rules:
+
+      - alert: ElasticsearchExporterUp
+        expr: elasticsearch_cluster_health_up == 0
+        for: 1m
+        labels:
+          priority: P3
+        annotations:
+          summary: "elasticsearch exporter could not get any data from elasticsearch"
+
+      - alert: ElasticsearchClusterHealthYellow
+        expr: >-
+          max(elasticsearch_cluster_health_status{color="yellow"})
+          by (cluster) > 0
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "elasticsearch is yellow (cluster: {{ $labels.cluster }})"
+
+      - alert: ElasticsearchClusterHealthRed
+        expr: >-
+          max(elasticsearch_cluster_health_status{color="red"})
+          by (cluster) > 0
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "elasticsearch is red (cluster: {{ $labels.cluster }})"
+
+      - alert: ElasticsearchClusterInitializingShards
+        expr: >-
+          max(elasticsearch_cluster_health_initializing_shards)
+          by (cluster) > 0
+        for: 15m
+        labels:
+          priority: P4
+        annotations:
+          summary: "elasticsearch cluster has shards in initializing state (cluster: {{ $labels.cluster }})"
+
+      - alert: ElasticsearchClusterRelocatingShards
+        expr: >-
+          max(elasticsearch_cluster_health_relocating_shards)
+          by (cluster) > 0
+        for: 15m
+        labels:
+          priority: P4
+        annotations:
+          summary: "cluster has shards in relocating state (cluster: {{ $labels.cluster }})"
+
+      - alert: ElasticsearchClusterTooManyPendingTasks
+        expr: >-
+          max(elasticsearch_cluster_health_number_of_pending_tasks)
+          by (cluster) > 8
+        for: 15m
+        labels:
+          priority: P3
+        annotations:
+          summary: "cluster has {{ $value }} tasks pending (cluster: {{ $labels.cluster }})"
+
+      - alert: ElasticsearchHeapTooHigh
+        expr: >-
+          elasticsearch_jvm_memory_used_bytes{area="heap"} /
+          elasticsearch_jvm_memory_max_bytes{area="heap"} > 0.9
+        for: 15m
+        labels:
+          priority: P3
+        annotations:
+          summary: "elasticsearch node has too heap usage above 90% (cluster: {{ $labels.cluster }})"
+
+      - alert: ElasticsearchIndicesFielddataMemorySize
+        expr: >-
+          elasticsearch_indices_fielddata_memory_size_bytes
+          / (1024 * 1024) > 100
+        for: 15m
+        labels:
+          priority: P3
+        annotations:
+          summary: "elasticsearch fielddata memory is consuming {{ $value }}MiB fielddata memory (cluster: {{ $labels.cluster }})"

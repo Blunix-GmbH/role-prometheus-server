@@ -1,0 +1,12 @@
+groups:
+  
+  - name: selenium
+    rules:
+
+      - alert: Selenium
+        expr: "selenium == 0"
+        for: 1m
+        labels:
+          priority: P1
+        annotations:
+          summary: "{{ $labels.instance }} selenium run failed"

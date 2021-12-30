@@ -1,0 +1,41 @@
+groups:
+
+  - name: disk
+    rules:
+
+      # Only 10 percent disk space left
+      - alert: DiskSpace
+        expr: >-
+          ((
+          node_filesystem_free_bytes{fstype="ext4"}/node_filesystem_size_bytes)
+          * 100) < 10 or
+          (node_filesystem_free{fstype="ext4"}/node_filesystem_size * 100)
+          < 10
+        for: 5m
+        labels:
+          priority: P2
+        annotations:
+          summary: "disk {{ $labels.mountpoint }} usage is above 90% (current value: {{ $value }}%)"
+
+      # Running out of disk space in 24 hours
+      - alert: DiskSpacePrediction
+        expr: >-
+          (
+          predict_linear(node_filesystem_free_bytes{fstype="ext4"}[8h], 24*3600)
+          < 0) or (
+          predict_linear(node_filesystem_free{fstype="ext4"}[8h], 24*3600) <0)
+        for: 1h
+        labels:
+          priority: P3
+        annotations:
+          summary: "disk {{ $labels.mountpoint }} may be full within 24 hours (current value: {{ $value }})"
+
+      # Inodes are nearly full
+      - alert: HighInodeUsage
+        expr: >-
+          ((node_filesystem_files_free / node_filesystem_files) * 100) <= 10
+        for: 5m
+        labels:
+          priority: P2
+        annotations:
+          summary: "disk {{ $labels.mountpoint }} is using more than 90% inodes (current value: {{ $value }}%)"

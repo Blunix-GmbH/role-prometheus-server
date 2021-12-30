@@ -1,0 +1,11 @@
+groups:
+  - name: entropy
+    rules:
+
+      - alert: EntropyLow
+        expr: "( ( entropy_avail * 100 ) / entropy_poolsize ) < 20"
+        for: 30m
+        labels:
+          priority: P4
+        annotations:
+          summary: "less than 20% entropy available (current value: {{ $value }})"

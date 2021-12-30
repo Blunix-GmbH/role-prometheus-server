@@ -1,0 +1,117 @@
+- name: "prometheus-server {{ prometheus_server_version }} create prometheus-server group"
+  group:
+    name: prometheus-server
+    system: True
+    gid: 130
+
+- name: "prometheus-server {{ prometheus_server_version }} create prometheus-server user"
+  user:
+    name: prometheus-server
+    system: True
+    home: /var/lib/prometheus-server
+    shell: /bin/false
+    group: prometheus-server
+    uid: 130
+
+- name: "prometheus-server {{ prometheus_server_version }} create directories"
+  file:
+    state: directory
+    path: "{{ prometheus_server_directory }}"
+    owner: prometheus-server
+    group: prometheus-server
+    mode: 0750
+  with_items:
+    - "/etc/prometheus-server/rules.d"
+    - "/usr/local/src/prometheus-server/{{ prometheus_server_version }}/archive"
+  loop_control:
+    loop_var: prometheus_server_directory
+
+- name: "prometheus-server {{ prometheus_server_version }} check if tar.gz was already downloaded"
+  stat:
+    path: "/usr/local/src/prometheus-server/{{ prometheus_server_version }}/prometheus-{{ prometheus_server_version }}.linux-amd64.tar.gz"
+  register: prometheus_server_downloaded
+
+- name: "prometheus-server {{ prometheus_server_version }} download and unpack tar.gz"
+  unarchive:
+    src: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_server_version }}/prometheus-{{ prometheus_server_version }}.linux-amd64.tar.gz"
+    dest: "/usr/local/src/prometheus-server/{{ prometheus_server_version }}/"
+    remote_src: True
+    owner: prometheus-server
+    group: prometheus-server
+  notify: restart prometheus server
+  when: prometheus_server_downloaded.stat.exists | default(False) != True
+
+- name: "prometheus-server {{ prometheus_server_version }} symlink binaries"
+  file:
+    state: link
+    src: "/usr/local/src/prometheus-server/{{ prometheus_server_version }}/prometheus-{{ prometheus_server_version }}.linux-amd64/{{ prometheus_server_binary }}"
+    dest: "/usr/local/bin/{{ prometheus_server_binary }}"
+    owner: prometheus-server
+    group: prometheus-server
+    # mode: 0500
+    force: True
+  with_items:
+    - prometheus
+    - promtool
+  loop_control:
+    loop_var: prometheus_server_binary
+  notify: restart prometheus server
+
+- name: "prometheus-server {{ prometheus_server_version }} copy rules from local files"
+  copy:
+    src: "{{ prometheus_server_rule['src'] }}"
+    dest: "/etc/prometheus-server/rules.d/{{ prometheus_server_rule['name'] }}.yml"
+    owner: prometheus-server
+    group: prometheus-server
+    mode: 0640
+  with_items: "{{ prometheus_server_rules }}"
+  loop_control:
+    loop_var: prometheus_server_rule
+  when: prometheus_server_rule['state'] | default('present') != 'absent' and prometheus_server_rule['src'] is defined
+  notify: restart prometheus server
+
+- name: "prometheus-server {{ prometheus_server_version }} download rules from URLs"
+  get_url:
+    url: "{{ prometheus_server_rule['url'] }}"
+    dest: "/etc/prometheus-server/rules.d/{{ prometheus_server_rule['name'] }}.yml"
+    owner: prometheus-server
+    group: prometheus-server
+    mode: 0640
+  with_items: "{{ prometheus_server_rules }}"
+  loop_control:
+    loop_var: prometheus_server_rule
+  when: prometheus_server_rule['state'] | default('present') != 'absent' and prometheus_server_rule['url'] is defined
+  notify: restart prometheus server
+
+- name: "prometheus-server {{ prometheus_server_version }} remove rules set to absent"
+  file:
+    state: absent
+    path: "/etc/prometheus-server/rules.d/{{ prometheus_server_rule['name'] }}.yml"
+  when: prometheus_server_rule['state'] | default('present') == 'absent'
+  notify: restart prometheus server
+
+- name: "prometheus-server {{ prometheus_server_version }} template prometheus.yml"
+  template:
+    src: templates/etc/prometheus-server/prometheus.yml.j2
+    dest: /etc/prometheus-server/prometheus.yml
+    owner: prometheus-server
+    group: prometheus-server
+    mode: 0640
+  notify: restart prometheus server
+
+- name: "prometheus-server {{ prometheus_server_version }} template systemd unit file"
+  template:
+    src: templates/etc/systemd/system/prometheus-server.service.j2
+    dest: /etc/systemd/system/prometheus-server.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload systemd daemon
+    - restart prometheus server
+
+- name: "prometheus-server {{ prometheus_server_version }} remove default systemd unit file"
+  file:
+    state: absent
+    path: /etc/systemd/system/prometheus.service
+  notify: reload systemd daemon

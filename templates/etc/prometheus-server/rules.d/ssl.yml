@@ -1,0 +1,32 @@
+groups:
+
+  - name: ssl
+    rules:
+
+      - alert: SSLCertExpiringDays14
+        expr: >-
+          (probe_ssl_earliest_cert_expiry{job="blackbox"} - time()) / 86400
+          < 14
+        for: 1s
+        labels:
+          priority: P4
+        annotations:
+          summary: "SSL certificate is expiring in les than 14 days (current value: {{ $value }})"
+
+      - alert: SSLCertExpiringDays3
+        expr: >-
+          (probe_ssl_earliest_cert_expiry{job="blackbox"} - time()) / 86400
+          < 3
+        for: 1s
+        labels:
+          priority: P2
+        annotations:
+          summary: "SSL certificate is expiring in les than 3 days (current value: {{ $value }})"
+
+      - alert: SSLNotWorking
+        expr: probe_http_ssl == 0
+        for: 1s
+        labels:
+          priority: P1
+        annotations:
+          summary: "SSL connection failed"

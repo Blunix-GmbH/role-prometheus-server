@@ -1,0 +1,100 @@
+groups:
+
+  - name: ionos-cloud
+    rules:
+
+
+
+      - alert: IonosCloudApi
+        expr: "ionos_cloud_apis_and_frontends_cloud_api != 0"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "IONOS cloud API reported as impaired"
+
+      - alert: IonosCloudDatacenterDesigner
+        expr: "ionos_cloud_apis_and_frontends_data_center_designer != 0"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "IONOS cloud Datacenter Designer reported as impaired"
+
+
+
+      - alert: IonosCloudFraCompute
+        expr: "ionos_cloud_location_de_fra_compute != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location FRA (Frankfurt) compute reported as impaired"
+
+      - alert: IonosCloudFraStorage
+        expr: "ionos_cloud_location_de_fra_storage != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location FRA (Frankfurt) storage reported as impaired"
+
+      - alert: IonosCloudFraNetwork
+        expr: "ionos_cloud_location_de_fra_network != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location FRA (Frankfurt) network reported as impaired"
+
+
+
+      - alert: IonosCloudTxlCompute
+        expr: "ionos_cloud_location_de_txl_compute != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location TXL (Berlin Tegel) compute reported as impaired"
+
+      - alert: IonosCloudTxlStorage
+        expr: "ionos_cloud_location_de_txl_storage != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location TXL (Berlin Tegel) storage reported as impaired"
+
+      - alert: IonosCloudTxlNetwork
+        expr: "ionos_cloud_location_de_txl_network != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location TXL (Berlin Tegel) network reported as impaired"
+
+
+
+      - alert: IonosCloudFkbCompute
+        expr: "ionos_cloud_location_de_fkb_compute != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location FKB (Karlsruhe) compute reported as impaired"
+
+      - alert: IonosCloudFkbStorage
+        expr: "ionos_cloud_location_de_fkb_storage != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location FKB (Karlsruhe) storage reported as impaired"
+
+      - alert: IonosCloudFkbNetwork
+        expr: "ionos_cloud_location_de_fkb_network != 0"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "IONOS cloud location FKB (Karlsruhe) network reported as impaired"

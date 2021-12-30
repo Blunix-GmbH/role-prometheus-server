@@ -1,0 +1,19 @@
+groups:
+  - name: filedescriptor
+    rules:
+
+      - alert: FiledescriptorLow
+        expr: "( ( filedescriptor_open * 100 ) / filedescriptor_max ) >= 80"
+        for: 1h
+        labels:
+          priority: P4
+        annotations:
+          summary: "available filedescriptors above 80% (current value: {{ $value }}%)"
+
+      - alert: FiledescriptorEmpty
+        expr: "( ( filedescriptor_open * 100 ) / filedescriptor_max ) >= 99"
+        for: 1m
+        labels:
+          priority: P3
+        annotations:
+          summary: "available filedescriptors above 99% (current value: {{ $value }}%)"

@@ -1,0 +1,16 @@
+groups:
+
+  - name: kernel-version
+    rules:
+
+      - alert: KernelAvailable
+        expr: >-
+          kernel_latest_version > kernel_used_version or
+          kernel_latest_major_revision > kernel_used_major_revision or
+          kernel_latest_minor_revision > kernel_used_minor_revision or
+          kernel_latest_patch_number > kernel_used_patch_number
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "new kernel installed, reboot required"

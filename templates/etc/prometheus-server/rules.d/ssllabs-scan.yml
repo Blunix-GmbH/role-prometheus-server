@@ -1,0 +1,12 @@
+groups:
+
+  - name: ssllabs-scan
+    rules:
+
+      - alert: SsllabsScan
+        expr: "ssllabs_scan > 1"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "bad ssllabs scan score for site {{ $labels.name }} (current value: {{ $value }})"

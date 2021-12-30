@@ -1,0 +1,43 @@
+groups:
+  - name: cron
+    rules:
+
+      - alert: CronUnmonitored
+        expr: "cron_unmonitored >= 1"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "{{ $value }} unmonitored cronjobs for user {{ $labels.user }}"
+
+      - alert: CronDuration
+        expr: "cron_duration >= 3600"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "cronjob {{ $labels.name }} is running longer than one hour ({{ $value }} seconds)"
+
+      - alert: CronCpu
+        expr: "cron_cpu >= 90"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "cronjob {{ $labels.name }} is using more than 90% CPU ({{ $value }}% CPU)"
+
+      - alert: CronMemory
+        expr: "cron_memory >= 2048000"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "cronjob {{ $labels.name }} is using more than 2048 MB memory ({{ $value }}kb)"
+
+      - alert: CronExit
+        expr: "cron_exit > 0"
+        for: 1m
+        labels:
+          priority: P3
+        annotations:
+          summary: "cronjob {{ $labels.name }} has exit status != 0 (exit status: {{ $value }})"

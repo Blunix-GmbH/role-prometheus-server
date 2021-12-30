@@ -1,0 +1,77 @@
+# debug, info, warn or error
+prometheus_server_log_level: "info"
+prometheus_grafana_config_log_level: "info"
+prometheus_grafana_config_port: 10002
+prometheus_grafana_config_smtp_from_address: "grafana@{{ inventory_hostname }}"
+
+prometheus_server_version: 2.20.0
+prometheus_alertmanager_version: 0.21.0
+prometheus_grafana_version: 7.1.3
+
+
+prometheus_server_rules_default:
+    # node exporter
+  - name: up
+    src: "templates/etc/prometheus-server/rules.d/up.yml"
+    state: present
+  - name: base
+    src: "templates/etc/prometheus-server/rules.d/base.yml"
+  - name: borg
+    src: "templates/etc/prometheus-server/rules.d/borg.yml"
+  - name: cpu
+    src: "templates/etc/prometheus-server/rules.d/cpu.yml"
+  - name: disk
+    src: "templates/etc/prometheus-server/rules.d/disk.yml"
+  - name: load-average
+    src: "templates/etc/prometheus-server/rules.d/load.yml"
+  - name: memory
+    src: "templates/etc/prometheus-server/rules.d/memory.yml"
+  - name: process
+    src: "templates/etc/prometheus-server/rules.d/processes.yml"
+  - name: systemd
+    src: "templates/etc/prometheus-server/rules.d/systemd.yml"
+  - name: ntp
+    src: "templates/etc/prometheus-server/rules.d/ntp.yml"
+    # prometheus-server
+  - name: prometheus-server
+    src: "templates/etc/prometheus-server/rules.d/prometheus-server.yml"
+    # node textfilecollector scripts
+  - name: ssl-certificate
+    src: "templates/etc/prometheus-server/rules.d/ssl-certificate.yml"
+  - name: entropy
+    src: "templates/etc/prometheus-server/rules.d/entropy.yml"
+  - name: apt
+    src: "templates/etc/prometheus-server/rules.d/apt.yml"
+  - name: filedescriptor
+    src: "templates/etc/prometheus-server/rules.d/filedescriptor.yml"
+  - name: kernel-version
+    src: "templates/etc/prometheus-server/rules.d/kernel-version.yml"
+  - name: ssllabs-scan
+    src: "templates/etc/prometheus-server/rules.d/ssllabs-scan.yml"
+  - name: dnscrypt-proxy
+    src: "templates/etc/prometheus-server/rules.d/dnscrypt-proxy.yml"
+  - name: selenium
+    src: "templates/etc/prometheus-server/rules.d/selenium.yml"
+  - name: cron
+    src: "templates/etc/prometheus-server/rules.d/cron.yml"
+  - name: shorewall
+    src: "templates/etc/prometheus-server/rules.d/shorewall.yml"
+  - name: github-releases
+    src: "templates/etc/prometheus-server/rules.d/github-releases.yml"
+    # blackbox exporter
+  - name: ssl
+    src: "templates/etc/prometheus-server/rules.d/ssl.yml"
+    # services
+  - name: redis
+    src: "templates/etc/prometheus-server/rules.d/redis.yml"
+  - name: elasticsarch
+    src: "templates/etc/prometheus-server/rules.d/elasticsearch.yml"
+  - name: postgresql
+    src: "templates/etc/prometheus-server/rules.d/postgresql.yml"
+  # - name: mysql
+  #   src: "templates/etc/prometheus-server/rules.d/mysql.yml"
+  # - name: rabbitmq
+  #   src: "templates/etc/prometheus-server/rules.d/rabbitmq.yml"
+
+prometheus_server_rules_custom: []
+prometheus_server_rules: "{{ prometheus_server_rules_default + prometheus_server_rules_custom }}"

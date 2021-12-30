@@ -1,0 +1,293 @@
+# # WebUI accessible at: http://10.99.0.2/prometheus/ and http://10.99.0.2/alertmanager/
+#
+# - name: Converge
+#   hosts: bullseye1
+#   become: True
+#   roles:
+#     - role: role-prometheus-server
+#     - role: blunix_role-nginx_11.0.0
+#   vars:
+#     prometheus_server_version: 2.20.0
+#     prometheus_scrape_configs:
+#         # node_exporters
+#         # the name argument has to match prometheus_exporters_ports in role-prometheus-exporters/defaults/main.yml
+#         # do not list the blackbox here, it is defined below
+#       - name: node
+#         targets:
+#           - 127.0.0.1
+#           - 10.99.0.3
+#       - name: nginxlog
+#         targets:
+#           - 127.0.0.1
+#       # - name: blackbox   # do not define this!
+#       #   targets:
+#       #     - 127.0.0.1
+#       #     - 10.99.0.3
+#
+#     # config for the blackbox exporter, to be set up on the prometheus server
+#     prometheus_scrape_blackbox_configs:
+#         # name of the host where the blackbox exporter runs
+#       - name: "{{ inventory_hostname }}"
+#         # ip of this host
+#         ip: "127.0.0.1"
+#         # module to use, defined on the blackbox exporter
+#         module: http_2xx
+#         # targets to check with this module
+#         targets:
+#           - "https://prometheus.io"
+#           - "https://github.com"
+#
+#     # There is no way here to specify yaml here directly to template it as a rule.
+#     # This is because the yaml specified in rules is usually to complicated to be
+#     # read in here and then templated out again. Using files makes this simpler.
+#     prometheus_server_rules:
+#       - name: cpu-usage
+#         src: templates/etc/prometheus/rules.d/cpu-usage.yml
+#       - name: deadman
+#         state: present
+#         src: templates/etc/prometheus/rules.d/deadman.yml
+#       - name: disk
+#         src: templates/etc/prometheus/rules.d/disk.yml
+#       - name: load-average
+#         src: templates/etc/prometheus/rules.d/load-average.yml
+#       - name: systemd
+#         src: templates/etc/prometheus/rules.d/systemd.yml
+#         # or:
+#         #url: https://github.com/monitoring-patrick/prometheus-rules/systemd.yml
+#       - name: system-time
+#         src: templates/etc/prometheus/rules.d/system-time.yml
+#       - name: mem-usage
+#         src: templates/etc/prometheus/rules.d/mem-usage.yml
+#       - name: up
+#         src: templates/etc/prometheus/rules.d/up.yml
+#
+#     prometheus_alertmanager_version: 0.21.0
+#     prometheus_alertmanager_email_recipient: monitoring@blunix.org
+#
+#     # grafana-server
+#     prometheus_grafana_version: 7.1.3
+#     prometheus_grafana_config_secret_key: QXKkXTnYStkGNEbep78lxXaPme89pFs6Jwc0TaW
+#     prometheus_grafana_config_smtp_from_address: "grafana@example.com"
+#
+#     # blunix.role-nginx
+#     prometheus_nginx_server_name: "_"
+#     prometheus_nginx_listen: "0.0.0.0"
+#     nginx_vhosts_absent:
+#       - default
+#     nginx_vhosts_present:
+#       - template: templates/etc/nginx/sites-available/000-default.conf.j2
+#         name: 000-default
+#
+#
+#   # prepare ssl certificate for molecule nginx vhost
+#   # on workstation: echo '10.99.0.2 bullseye1' | sudo tee /etc/hosts
+#   pre_tasks:
+#     - name: create directory /etc/nginx/ssl
+#       file:
+#         path: "/etc/nginx/ssl/"
+#         state: directory
+#         owner: root
+#         group: root
+#         mode: 0700
+#     - name: generate dhparam
+#       openssl_dhparam:
+#         path: "/etc/nginx/ssl/{{ inventory_hostname }}.dh512.pem"
+#         size: 512
+#     - name: install molecule tests apt requirements
+#       apt:
+#         name:
+#           - python3-openssl
+#           - curl
+#         state: present
+#     - name: "generate an openssl private key for {{ inventory_hostname }}"
+#       openssl_privatekey:
+#         path: "/etc/nginx/ssl/{{ inventory_hostname }}.key"
+#     - name: "generate an openssl certificate signing request for {{ inventory_hostname }}"
+#       openssl_csr:
+#         path: "/etc/nginx/ssl/{{ inventory_hostname }}.csr"
+#         privatekey_path: "/etc/nginx/ssl/{{ inventory_hostname }}.key"
+#         common_name: "{{ inventory_hostname }}"
+#     - name: "generate an openssl self signed certificate for {{ inventory_hostname }}"
+#       openssl_certificate:
+#         path: "/etc/nginx/ssl/{{ inventory_hostname }}.crt"
+#         privatekey_path: "/etc/nginx/ssl/{{ inventory_hostname }}.key"
+#         csr_path: "/etc/nginx/ssl/{{ inventory_hostname }}.csr"
+#         provider: selfsigned
+
+
+
+
+- name: Converge
+  hosts: all
+  become: True
+  roles:
+    - role: role-prometheus-exporters
+  vars:
+
+    # Available exporters: https://prometheus.io/docs/instrumenting/exporters/
+    prometheus_exporters:
+    #
+    #
+    #     # name of this exporter (for the binary and systemd service)
+    #   - name: node
+    #     # version of this exporter (required for directory structure)
+    #     version: 1.0.1
+    #     # the tasks file template to use in in role-prometheus-exporters/tasks/exporters/{{ task_template }}.yml
+    #     task_template: default
+    #     # url to the tar.gz
+    #     url: "https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz"
+    #     # user and group for directories and systemd service
+    #     # default user and group: prometheus_exporter
+    #     user: root
+    #     group: root
+    #     # state: present or absent, default: present
+    #     state: present
+    #     # arguments for the binary in the systemd service file
+    #     systemd_service_arguments: |
+    #       --log.level=info \
+    #       --web.listen-address="127.0.0.1:9100" \
+    #       --web.max-requests="1" \
+    #       --collector.disable-defaults \
+    #       --collector.arp \
+    #       --collector.bcache \
+    #       --collector.conntrack \
+    #       --collector.cpu \
+    #       --collector.cpufreq \
+    #       --collector.diskstats \
+    #       --collector.entropy \
+    #       --collector.filesystem \
+    #       --collector.hwmon \
+    #       --collector.interrupts \
+    #       --collector.loadavg \
+    #       --collector.logind \
+    #       --collector.meminfo \
+    #       --collector.mountstats \
+    #       --collector.netclass \
+    #       --collector.netdev \
+    #       --collector.netstat \
+    #       --collector.nfs \
+    #       --collector.nfsd \
+    #       --collector.ntp \
+    #       --collector.ntp.server="127.0.0.1" \
+    #       --collector.ntp.protocol-version=4 \
+    #       --collector.processes \
+    #       --collector.systemd \
+    #       --collector.systemd.enable-task-metrics \
+    #       --collector.systemd.enable-restarts-metrics \
+    #       --collector.systemd.enable-start-time-metrics \
+    #       --collector.textfile.directory /var/lib/prometheus-textfile-collector \
+    #       --collector.time \
+    #       --collector.udp_queues \
+    #       --collector.uname \
+    #       --collector.vmstat
+    #
+    #
+
+
+      - name: node-textfile
+        version: no-version
+        task_template: node-textfile
+        downloads:
+          - name: apt.sh
+            src: "https://raw.githubusercontent.com/prometheus-community/node-exporter-textfile-collector-scripts/master/apt.sh"
+          - name: deleted_libraries.py
+            src: "https://raw.githubusercontent.com/prometheus-community/node-exporter-textfile-collector-scripts/master/deleted_libraries.py"
+          - name: ntpd_metrics.py
+            src: "https://raw.githubusercontent.com/prometheus-community/node-exporter-textfile-collector-scripts/master/ntpd_metrics.py"
+        # templates:
+        #   - name: foo.sh
+        #     src: "templates/var/lib/prometheus-textfile-collector/foo.sh"
+
+
+
+
+
+
+
+      # - name: blackbox
+    #     version: 0.17.0
+    #     task_template: default
+    #     url: "https://github.com/prometheus/blackbox_exporter/releases/download/v0.17.0/blackbox_exporter-0.17.0.linux-amd64.tar.gz"
+    #     systemd_service_arguments: |
+    #       --config.file="/etc/prometheus-exporters/blackbox/config.yml" \
+    #       --log.level=info \
+    #       --web.listen-address="127.0.0.1:9115"
+    #     # Example config: https://github.com/prometheus/blackbox_exporter/blob/master/example.yml
+    #     # Format here is text not yaml!
+    #     config: |
+    #       modules:
+    #         http_2xx:
+    #           prober: http
+    #           timeout: 5s
+    #           http:
+    #             valid_http_versions:
+    #               - "HTTP/1.1"
+    #               - "HTTP/2.0"
+    #             method: GET
+    #             headers:
+    #               Accept-Language: en-US
+    #             no_follow_redirects: false
+    #             fail_if_not_ssl: true
+        #
+        #
+        # Doc: https://github.com/martin-helmich/prometheus-nginxlog-exporter
+      # - name: nginxlog
+      #   version: 1.6.0
+      #   url: "https://github.com/martin-helmich/prometheus-nginxlog-exporter/releases/download/v1.6.0/prometheus-nginxlog-exporter_1.6.0_linux_amd64.deb"
+      #   task_template: nginxlog
+      #   config:
+      #     - namespace: prometheus
+      #       format: |
+      #         "host=\"$host\" addr=\"$remote_addr\" user=\"$remote_user\" time=\"$time_local\" req=\"$request\" stat=\"$status\" bbs=\"$body_bytes_sent\" refe=\"$http_referer\" agnt=\"$http_user_agent\" rt=\"$request_time\" cc=\"$sent_http_cache_control\" uct=\"$upstream_connect_time\" uht=\"$upstream_header_time\" urt=\"$upstream_response_time\" port=\"$server_port\""
+      #       source:
+      #         files:
+      #           - "/var/log/nginx/prometheus-server.log"
+      #       labels:
+      #         app: prometheus
+      #         env: prod
+      #       tags:
+      #         - nginx
+      #     - namespace: prometheus2
+      #       format: |
+      #         "host=\"$host\" addr=\"$remote_addr\" user=\"$remote_user\" time=\"$time_local\" req=\"$request\" stat=\"$status\" bbs=\"$body_bytes_sent\" refe=\"$http_referer\" agnt=\"$http_user_agent\" rt=\"$request_time\" cc=\"$sent_http_cache_control\" uct=\"$upstream_connect_time\" uht=\"$upstream_header_time\" urt=\"$upstream_response_time\" port=\"$server_port\""
+      #       source:
+      #         syslog:
+      #           listen_address: "udp://127.0.0.1:5531"
+      #           format: "rfc3164"
+      #       labels:
+      #         app: prometheus2
+      #         env: stag
+
+
+
+      #   # Doc https://github.com/wrouesnel/postgres_exporter
+      # - name: postgres
+      #   version: 0.8.0
+      #   task_template: default
+      #   url: "https://github.com/wrouesnel/postgres_exporter/releases/download/v0.8.0/postgres_exporter_v0.8.0_linux-amd64.tar.gz"
+      #   # some retards dont stick to the convention for naming the archive, which then makes trouble with creating the symlink for the binary
+      #   archive_name: "postgres_exporter_v0.8.0_linux-amd64"
+      #   user: postgres
+      #   group: postgres
+      #   systemd_service_arguments: |
+      #     --auto-discover-databases \
+      #     --log.level=info \
+      #     --web.listen-address="127.0.0.1:9187"
+      #   # Example config: https://github.com/prometheus/blackbox_exporter/blob/master/example.yml
+      #   # Format here is text not yaml!
+      #   # NOTE execute the sql commands here: https://github.com/wrouesnel/postgres_exporter#running-as-non-superuser
+      #   env: |
+      #     DATA_SOURCE_NAME="postgresql://postgres_exporter:password@localhost:5432/postgres?sslmode=disable"
+
+
+      #   # Doc https://github.com/timonwong/uwsgi_exporter
+      # - name: uwsgi
+      #   version: 1.0.0
+      #   task_template: default
+      #   url: "https://github.com/timonwong/uwsgi_exporter/releases/download/v1.0.0/uwsgi_exporter-1.0.0.linux-amd64.tar.gz"
+      #   user: root
+      #   group: root
+      #   systemd_service_arguments: |
+      #     --stats.uri="unix:/tmp/uwsgi-stats-sock" \
+      #     --log.level=info \
+      #     --web.listen-address="127.0.0.1:9238"

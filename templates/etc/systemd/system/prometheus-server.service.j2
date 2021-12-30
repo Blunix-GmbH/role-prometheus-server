@@ -1,0 +1,30 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Prometheus
+Documentation=https://prometheus.io/docs/introduction/overview/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=prometheus-server
+Group=prometheus-server
+SyslogIdentifier=prometheus-server
+Restart=always
+WorkingDirectory=/var/lib/prometheus-server
+ExecReload=/bin/kill -HUP
+ExecStartPre=/usr/local/bin/promtool check config /etc/prometheus-server/prometheus.yml
+ExecStart=/usr/local/bin/prometheus \
+    --config.file=/etc/prometheus-server/prometheus.yml \
+    --log.level={{ prometheus_server_log_level }} \
+    --storage.tsdb.path=/var/lib/prometheus-server/data/ \
+    --storage.tsdb.retention.time="30d" \
+    --web.console.templates=/etc/prometheus-server/consoles \
+    --web.console.libraries=/etc/prometheus-server/console_libraries \
+    --web.external-url="https://{{ prometheus_web_external_url }}/prometheus" \
+    --web.listen-address="127.0.0.1:9090" \
+    --web.page-title="Prometheus Monitoring"
+
+[Install]
+WantedBy=multi-user.target

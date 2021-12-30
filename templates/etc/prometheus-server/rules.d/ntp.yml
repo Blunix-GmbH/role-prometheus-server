@@ -1,0 +1,20 @@
+groups:
+
+  - name: ntp
+    rules:
+
+      - alert: NtpOffset
+        expr: "node_ntp_offset_seconds < -0.03"
+        for: 15m
+        labels:
+          priority: P3
+        annotations:
+          summary: "ntp has high offset (current value: {{ $value }})"
+
+      - alert: NodeTimeDiffersFromPrometheus
+        expr: time() - node_time > 60 or time() - node_time_seconds > 60
+        for: 10m
+        labels:
+          priority: P4
+        annotations:
+          summary: "node time differs from prometheus by {{ $value }} seconds"

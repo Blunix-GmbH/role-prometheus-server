@@ -1,0 +1,27 @@
+groups:
+  - name: haproxy.rules
+    rules:
+      - alert: HaproxyLowFreeSessions
+        expr: haproxy_backend_limit_sessions - haproxy_backend_current_sessions < 50
+        for: 10m
+        labels:
+          'severity': 'warning'
+        annotations:
+          'summary': 'HAProxy has low free sessions'
+          'description': '{{ $labels.backend }} on {{ $labels.instance }} has {{ $value }} sessions left.'
+      - alert: HaproxyHighMaintenanceSiteOccurences
+        expr: rate(haproxy_frontend_http_responses_total{code="5xx"}[1m]) > 5
+        for: 10m
+        labels:
+          'severity': 'page'
+        annotations:
+          'summary': 'Loadbalancer is serving maintenance page'
+          'description': '{{ $labels.frontend }} on {{ $labels.instance }} has {{ $value }}/s maintenance page occurences'
+      - alert: HaproxyBackendDown
+        expr: haproxy_backend_up == 0
+        for: 10m
+        labels:
+          'severity': 'page'
+        annotations:
+          'summary': 'Loadbalancer Backend down'
+          'description': '{{ $labels.backend }} on {{ $labels.instance }} is down'

@@ -1,0 +1,79 @@
+groups:
+
+  - name: memory
+    rules:
+
+      - alert: MemUsageFull
+        expr: >-
+          (
+            (
+              ( node_memory_MemTotal_bytes -
+                node_memory_MemFree_bytes -
+                node_memory_Cached_bytes
+              )
+          /
+            (node_memory_MemTotal_bytes) * 100)) > 98
+          or
+          (
+            (
+              (
+                node_memory_MemTotal -
+                node_memory_MemFree -
+                node_memory_Cached
+              )
+            / (node_memory_MemTotal) * 100)) > 98
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "memory usage is above 98% (current value: {{ $value }})"
+
+      - alert: MemUsageAlwaysHigh
+        expr: >-
+          (
+            (
+              ( node_memory_MemTotal_bytes -
+                node_memory_MemFree_bytes -
+                node_memory_Cached_bytes
+              )
+          /
+            (node_memory_MemTotal_bytes) * 100)) > 95
+          or
+          (
+            (
+              (
+                node_memory_MemTotal -
+                node_memory_MemFree -
+                node_memory_Cached
+              )
+            / (node_memory_MemTotal) * 100)) > 95
+        for: 24h
+        labels:
+          priority: P3
+        annotations:
+          summary: "memory usage is above 95% for more than 24 hours (current value: {{ $value }})"
+
+      - alert: MemSwapUsageHigh
+        expr: >-
+          (
+            (
+              ( node_memory_SwapTotal_bytes -
+                node_memory_SwapFree_bytes -
+                node_memory_SwapCached_bytes
+              )
+          /
+            (node_memory_SwapTotal_bytes) * 100)) > 75
+          or
+          (
+            (
+              (
+                node_memory_SwapTotal_bytes -
+                node_memory_SwapFree_bytes -
+                node_memory_SwapCached_bytes
+              )
+            / (node_memory_SwapTotal_bytes) * 100)) > 75
+        for: 5m
+        labels:
+          priority: P4
+        annotations:
+          summary: "swap usage is above 75% usage (current value: {{ $value }})"

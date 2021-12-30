@@ -1,0 +1,77 @@
+# prometheus config file
+# {{ ansible_managed }}
+# Documentation: https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+
+
+global:
+  scrape_interval: 30s
+  scrape_timeout: 25s
+  evaluation_interval: 30s
+
+
+alerting:
+  alertmanagers:
+  - path_prefix: /alertmanager
+    static_configs:
+      - targets:
+         - "127.0.0.1:9093"
+
+
+rule_files:
+{% for rule in prometheus_server_rules %}
+{% if rule['state'] | default('present') == 'present' %}
+  - "rules.d/{{ rule['name'] }}.yml"
+{% endif %}
+{% endfor %}
+
+
+
+scrape_configs:
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets:
+        - '127.0.0.1:9090'
+    metrics_path: "/prometheus/metrics"
+
+  - job_name: "node_exporter"
+    metrics_path: "/node"
+    scheme: https
+    static_configs:
+      - targets:
+{% for prometheus_exporter_host in groups['all'] | sort %}
+        - "{{ prometheus_exporter_host }}.{{ internal_private_domain }}:10999"
+{% endfor %}
+
+{% for prometheus_scrape_blackbox_config in prometheus_scrape_blackbox_configs %}
+  - job_name: "blackbox_exporter at {{ prometheus_scrape_blackbox_config['name'] }} for {{ prometheus_scrape_blackbox_config['module'] }}"
+    metrics_path: "/blackbox"
+    scheme: https
+    params:
+      module:
+        - "{{ prometheus_scrape_blackbox_config['module'] }}"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: "{{ prometheus_scrape_blackbox_config['ip'] }}:10999"
+    static_configs:
+      - targets:
+{% for prometheus_scrape_blackbox_config_target in prometheus_scrape_blackbox_config['targets'] %}
+        - "{{ prometheus_scrape_blackbox_config_target }}"
+{% endfor %}
+
+{% endfor %}
+{% for prometheus_exporter_variable_name in ['uwsgi', 'postgres', 'redis', 'nginxlog', 'elasticsearch'] %}
+  - job_name: "{{ prometheus_exporter_variable_name }}_exporter"
+    metrics_path: "/{{ prometheus_exporter_variable_name }}"
+    scheme: https
+    static_configs:
+      - targets:
+{% for prometheus_exporter_host in groups['all'] | sort if hostvars[prometheus_exporter_host]['prometheus_exporter_' + prometheus_exporter_variable_name] | default(False) == True %}
+        - "{{ prometheus_exporter_host }}:10999"
+{% endfor %}
+
+{% endfor %}

@@ -1,0 +1,15 @@
+groups:
+
+  - name: github-releases
+    rules:
+
+      - alert: GithubReleaseAvailable
+        expr: >-
+          github_release_latest_major_version > github_release_used_major_version or
+          github_release_latest_minor_version > github_release_used_minor_version or
+          github_release_latest_patch_version > github_release_used_patch_version
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "new github release for repository https://github.com/{{ $labels.repo }} available (used: {{ $labels.used }}, latest: {{ $labels.latest }})"

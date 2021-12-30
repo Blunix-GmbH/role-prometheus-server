@@ -1,0 +1,47 @@
+---
+- name: reload systemd daemon
+  systemd:
+    daemon_reload: True
+
+
+- name: check prometheus-server config
+  shell: /usr/local/bin/promtool check config /etc/prometheus-server/prometheus.yml
+  listen: restart prometheus server
+
+- name: restart prometheus-server
+  systemd:
+    name: prometheus-server
+    state: restarted
+    enabled: True
+  listen: restart prometheus server
+
+
+- name: check prometheus-downsampling config
+  shell: /usr/local/bin/promtool check config /etc/prometheus-downsampling/prometheus.yml
+  listen: restart prometheus downsampling
+
+- name: restart prometheus-downsampling
+  systemd:
+    name: prometheus-downsampling
+    state: restarted
+    enabled: True
+  listen: restart prometheus downsampling
+
+
+- name: check prometheus-alertmanager config
+  shell: /usr/local/bin/amtool check-config /etc/prometheus-alertmanager/alertmanager.yml
+  listen: restart prometheus alertmanager
+
+- name: restart prometheus-alertmanager
+  systemd:
+    name: prometheus-alertmanager
+    state: restarted
+    enabled: True
+  listen: restart prometheus alertmanager
+
+
+- name: restart grafana server
+  systemd:
+    name: grafana-server
+    state: restarted
+    enabled: True

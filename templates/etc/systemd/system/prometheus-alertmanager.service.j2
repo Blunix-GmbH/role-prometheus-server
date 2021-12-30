@@ -1,0 +1,25 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Prometheus Alertmanager
+Documentation=https://prometheus.io/docs/introduction/overview/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=prometheus-alertmanager
+Group=prometheus-alertmanager
+SyslogIdentifier=prometheus-alertmanager
+Restart=always
+WorkingDirectory=/var/lib/prometheus-alertmanager
+ExecReload=/bin/kill -HUP
+ExecStartPre=/usr/local/bin/amtool check-config /etc/prometheus-alertmanager/alertmanager.yml
+ExecStart=/usr/local/bin/prometheus-alertmanager \
+    --config.file=/etc/prometheus-alertmanager/alertmanager.yml \
+    --log.level=info \
+    --web.listen-address="127.0.0.1:9093" \
+    --web.external-url="https://{{ prometheus_alertmanager_web_external_url }}/alertmanager"
+
+[Install]
+WantedBy=multi-user.target

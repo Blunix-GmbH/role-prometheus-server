@@ -1,0 +1,11 @@
+groups:
+  - name: dnscrypt-proxy
+    rules:
+
+      - alert: DnsCryptProxy
+        expr: "dnscrypt_proxy == 0"
+        for: 1m
+        labels:
+          priority: P4
+        annotations:
+          summary: "unable to resolve own hostname via local dnscrypt-proxy"

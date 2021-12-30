@@ -1,0 +1,14 @@
+- name: include prometheus-server tasks
+  include_tasks: prometheus-server.yml
+
+- name: include prometheus-downsampling tasks
+  include_tasks: prometheus-downsampling.yml
+
+- name: include prometheus-alertmanager tasks
+  include_tasks: prometheus-alertmanager.yml
+
+- name: include grafana-server tasks
+  include_tasks: grafana-server.yml
+
+- name: include nginx-vhost tasks
+  include_tasks: nginx-vhost.yml

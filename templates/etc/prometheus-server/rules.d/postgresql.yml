@@ -1,0 +1,62 @@
+groups:
+
+  - name: postgresql.rules
+    rules:
+
+      - alert: PostgresUp
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          priority: P3
+        annotations:
+          summary: "PostgreSQL cannot be scraped"
+
+      - alert: PostgresLowFreeConnections
+        expr: >-
+          100 * sum by (instance) (pg_stat_activity_count) /
+          sum by (instance) (pg_settings_max_connections) > 80
+        for: 5m
+        labels:
+          priority: P2
+        annotations:
+          summary: "PostgreSQL is running out of connections (connections used: {{ $value }}% )"
+
+      - alert: PostgresqlExporterError
+        expr: pg_exporter_last_scrape_error > 0
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "Postgresql exporter is showing errors. A query may be buggy in query.yaml (value: {{ $value }})"
+
+      - alert: PostgresqlDeadLocks
+        expr: rate(pg_stat_database_deadlocks{datname!~"template.*|postgres"}[1m]) > 0
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "Postgresql has dead locks (value: {{ $value }}"
+
+      - alert: PostgresqlSlowQueries
+        expr: pg_slow_queries > 0
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "Postgresql executes slow queries (value: {{ $value }}"
+
+      - alert: PostgresqlHighRollbackRate
+        expr: rate(pg_stat_database_xact_rollback{datname!~"template.*"}[3m]) / rate(pg_stat_database_xact_commit{datname!~"template.*"}[3m]) > 0.02
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "Ratio of transactions being aborted compared to committed is higher than 2% (value: {{ $value }}"
+
+      - alert: PostgresqlTooManyLocksAcquired
+        expr: ((sum (pg_locks_count)) / (pg_settings_max_locks_per_transaction * pg_settings_max_connections)) > 0.20
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "too many locks acquired on the database. If this alert happens frequently, we may need to increase the postgres setting max_locks_per_transaction (value: {{ $value }})"

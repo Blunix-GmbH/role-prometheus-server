@@ -1,0 +1,30 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=Prometheus
+Documentation=https://prometheus.io/docs/introduction/overview/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=prometheus-downsampling
+Group=prometheus-downsampling
+SyslogIdentifier=prometheus-downsampling
+Restart=always
+WorkingDirectory=/var/lib/prometheus-downsampling
+ExecReload=/bin/kill -HUP
+ExecStartPre=/usr/local/bin/promtool check config /etc/prometheus-downsampling/prometheus.yml
+ExecStart=/usr/local/bin/prometheus \
+    --config.file=/etc/prometheus-downsampling/prometheus.yml \
+    --log.level={{ prometheus_server_log_level }} \
+    --storage.tsdb.path=/var/lib/prometheus-downsampling/data/ \
+    --storage.tsdb.retention.time="1095d" \
+    --web.console.templates=/etc/prometheus-downsampling/consoles \
+    --web.console.libraries=/etc/prometheus-downsampling/console_libraries \
+    --web.external-url="https://{{ prometheus_web_external_url }}/downsampling" \
+    --web.listen-address="127.0.0.1:9091" \
+    --web.page-title="Prometheus Downsampling"
+
+[Install]
+WantedBy=multi-user.target

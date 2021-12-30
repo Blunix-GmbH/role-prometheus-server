@@ -1,0 +1,90 @@
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} create prometheus-alertmanager group"
+  group:
+    name: prometheus-alertmanager
+    system: True
+    gid: 132
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} create prometheus-alertmanager user"
+  user:
+    name: prometheus-alertmanager
+    system: True
+    home: /var/lib/prometheus-alertmanager
+    shell: /bin/false
+    group: prometheus-alertmanager
+    uid: 132
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} create directories"
+  file:
+    state: directory
+    path: "{{ prometheus_alertmanager_directory }}"
+    owner: prometheus-alertmanager
+    group: prometheus-alertmanager
+    mode: 0750
+  with_items:
+    - "/usr/local/src/prometheus-alertmanager/{{ prometheus_alertmanager_version }}/archive"
+    - /etc/prometheus-alertmanager/templates
+  loop_control:
+    loop_var: prometheus_alertmanager_directory
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} check if tar.gz was already downloaded"
+  stat:
+    path: "/usr/local/src/prometheus-alertmanager/{{ prometheus_alertmanager_version }}/prometheus-{{ prometheus_alertmanager_version }}.linux-amd64.tar.gz"
+  register: prometheus_alertmanager_downloaded
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} download and unpack tar.gz"
+  unarchive:
+    src: "https://github.com/prometheus/alertmanager/releases/download/v{{ prometheus_alertmanager_version }}/alertmanager-{{ prometheus_alertmanager_version }}.linux-amd64.tar.gz"
+    dest: "/usr/local/src/prometheus-alertmanager/{{ prometheus_alertmanager_version }}/"
+    remote_src: True
+    owner: prometheus-alertmanager
+    group: prometheus-alertmanager
+  notify: restart prometheus alertmanager
+  when: prometheus_alertmanager_downloaded.stat.exists | default(False) != True
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} symlink alertmanager binary"
+  file:
+    state: link
+    src: "/usr/local/src/prometheus-alertmanager/{{ prometheus_alertmanager_version }}/alertmanager-{{ prometheus_alertmanager_version }}.linux-amd64/alertmanager"
+    dest: "/usr/local/bin/prometheus-alertmanager"
+    owner: prometheus-alertmanager
+    group: prometheus-alertmanager
+    force: True
+  notify: restart prometheus alertmanager
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} symlink amtool binary"
+  file:
+    state: link
+    src: "/usr/local/src/prometheus-alertmanager/{{ prometheus_alertmanager_version }}/alertmanager-{{ prometheus_alertmanager_version }}.linux-amd64/amtool"
+    dest: "/usr/local/bin/amtool"
+    owner: prometheus-alertmanager
+    group: prometheus-alertmanager
+    force: True
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} template alertmanager.yml"
+  template:
+    src: templates/etc/prometheus-alertmanager/alertmanager.yml.j2
+    dest: /etc/prometheus-alertmanager/alertmanager.yml
+    owner: prometheus-alertmanager
+    group: prometheus-alertmanager
+    mode: 0640
+  notify: restart prometheus alertmanager
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} copy blunix.email.tmpl"
+  copy:
+    src: templates/etc/prometheus-alertmanager/templates/email.blunix.tmpl
+    dest: /etc/prometheus-alertmanager/templates/email.blunix.tmpl
+    owner: prometheus-alertmanager
+    group: prometheus-alertmanager
+    mode: 0640
+  notify: restart prometheus alertmanager
+
+- name: "prometheus-alertmanager {{ prometheus_alertmanager_version }} template systemd unit file"
+  template:
+    src: templates/etc/systemd/system/prometheus-alertmanager.service.j2
+    dest: /etc/systemd/system/prometheus-alertmanager.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload systemd daemon
+    - restart prometheus alertmanager

@@ -1,0 +1,8 @@
+- src: git@git.blu.pm:ansible/role-prometheus-exporters.git
+  name: blunix.role-prometheus-exporters
+  scm: git
+  version: master
+- src: git@git.blunix.com:ansible/role-nginx.git
+  name: blunix_role-nginx_11.0.0
+  scm: git
+  version: 11.0.0

@@ -1,0 +1,11 @@
+groups:
+
+  - name: example1
+    rules:
+      - record: job_service:http_response_size_bytes_count
+        expr: avg(rate(http_response_size_bytes_count[2m])) by (job, service)
+
+  - name: example2
+    rules:
+      - record: job_federate:http_request_duration_microseconds_count
+        expr: avg(rate(http_request_duration_microseconds_count{handler="federate"}[2m])) by (job, federate)

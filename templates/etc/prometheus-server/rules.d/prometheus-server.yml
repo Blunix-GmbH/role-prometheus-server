@@ -1,0 +1,20 @@
+groups:
+
+  - name: prometheus-server
+    rules:
+
+      - alert: PrometheusServer
+        expr: "prometheus_rule_evaluation_failures_total >= 1"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "error loading rules: {{ $labels.rule_group }}"
+
+      - alert: PrometheusNodeTextfileScrapeError
+        expr: "node_textfile_scrape_error >= 1"
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "error scraping textfiles (debug with: grep 'failed to collect textfile data' /var/log/syslog)"

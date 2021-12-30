@@ -1,0 +1,44 @@
+groups:
+
+  - name: redis
+    rules:
+
+      - alert: RedisUp
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          priority: P3
+        annotations:
+          summary: "redis is down (job: {{ $labels.job }})"
+
+      - alert: RedisMissingBackup
+        expr: time() - redis_rdb_last_save_timestamp_seconds > 60 * 60 * 24
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "redis has not been backuped for 24 hours (value: {{ $value }})"
+
+      - alert: RedisOutOfMemory
+        expr: redis_memory_used_bytes / redis_total_system_memory_bytes * 100 > 90
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "redis memory usage about 90% (value: {{ $value }})"
+
+      - alert: RedisTooManyConnections
+        expr: redis_connected_clients > 100
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "redis has too many connections (value: {{ $value }}"
+
+      - alert: RedisRejectedConnections
+        expr: increase(redis_rejected_connections_total[1m]) > 0
+        for: 5m
+        labels:
+          priority: P3
+        annotations:
+          summary: "redis is rejecting connections (value: {{ $value }})"

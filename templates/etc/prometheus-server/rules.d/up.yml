@@ -1,0 +1,28 @@
+groups:
+
+  - name: up
+    rules:
+
+      - alert: TargetDown
+        expr: up{job="node_exporter"} == 0
+        for: 1m
+        labels:
+          priority: P2
+        annotations:
+          summary: "target down: {{ $labels.job }}"
+
+      - alert: BlackboxProbeFailed
+        expr: probe_success == 0
+        for: 5m
+        labels:
+          priority: P1
+        annotations:
+          summary: "blackbox check failed: {{ $labels.module }}"
+
+      - alert: NoTargetFound
+        expr: absent(up{job="node_exporter"}) == 1
+        for: 5m
+        labels:
+          priority: P1
+        annotations:
+          summary: "scrape targets down"

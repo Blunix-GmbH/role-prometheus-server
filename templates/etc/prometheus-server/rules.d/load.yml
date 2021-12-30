@@ -1,0 +1,16 @@
+groups:
+
+  - name: load-average
+    rules:
+
+      - alert: LoadAverage
+        expr: >-
+          ((node_load5 / count without (cpu, mode) (node_cpu{mode="system"}))
+          > 1)
+          or (node_load5 / count without (cpu, mode)
+          (node_cpu_seconds_total{mode="system"})) > 1
+        for: 6h
+        labels:
+          priority: P3
+        annotations:
+          summary: "average load is above threshold of 1 (current value: {{ $value }})"

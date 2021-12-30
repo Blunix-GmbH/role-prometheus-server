@@ -1,0 +1,13 @@
+groups:
+
+  - name: borg-backup
+    rules:
+
+      - alert: BorgLastBackup
+        # Last backup older than 28 hours
+        expr: time() - borg_last_successful_backup > 100800
+        for: 18h
+        labels:
+          priority: P4
+        annotations:
+          summary: "last borg backup is older than 28 hours ({{ $value | humanizeDuration }})"

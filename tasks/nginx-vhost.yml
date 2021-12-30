@@ -1,0 +1,17 @@
+- name: "nginx remove default /var/www/html/ files"
+  file:
+    state: absent
+    path: "/var/www/html/{{ prometheus_nginx_default_var_www_file }}"
+  with_items:
+    - "index.lighttpd.html"
+    - "index.nginx-debian.html"
+  loop_control:
+    loop_var: prometheus_nginx_default_var_www_file
+
+- name: "nginx setup /var/www/html/index.html"
+  template:
+    src: templates/var/www/html/index.html.j2
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: 0440

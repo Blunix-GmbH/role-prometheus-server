@@ -1,0 +1,18 @@
+groups:
+  - name: deadman.rules
+    rules:
+      - alert: DeadMansSwitch
+        expr: vector(1)
+        labels:
+          severity: deadman
+        annotations:
+          summary: Alerting DeadMansSwitch
+          description: This is a DeadMansSwitch meant to ensure that the entire Alerting pipeline is functional. If triggered, prometheus might have a problem.
+      - alert: WeeklyTestalert
+        expr: day_of_week() == 1 and hour() == 8 and minute() < 20
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: Alerting weekly test alarm
+          description: This alert notification shows that the alerting pipeline is working as intended. Have a nice week!

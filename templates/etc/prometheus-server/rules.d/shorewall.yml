@@ -1,0 +1,12 @@
+groups:
+  
+  - name: shorewall
+    rules:
+
+      - alert: ShorewallRunning
+        expr: "shorewall_running == 0"
+        for: 1s
+        labels:
+          priority: P3
+        annotations:
+          summary: "shorewall is not running"

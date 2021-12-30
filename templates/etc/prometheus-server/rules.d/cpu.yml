@@ -1,0 +1,19 @@
+groups:
+
+  - name: cpu
+    rules:
+
+      # Fires if cpu usage is above 75% for more than 6 hours
+      - alert: CpuUsage
+        expr: >-
+          (100 - (avg by (instance)
+            (irate(node_cpu_seconds_total{mode="idle"}[5m]))
+            * 100)) > 75
+          or
+          (100 - (avg by (instance) (irate(node_cpu{mode="idle"}[5m]))
+            * 100)) > 75
+        for: 6h
+        labels:
+          priority: P3
+        annotations:
+          summary: "CPU usage is above 75% for more than 6 hours (current value: {{ $value }}%)"
