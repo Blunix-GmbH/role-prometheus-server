@@ -26,6 +26,8 @@ prometheus_server_rules_default:
     src: "templates/etc/prometheus-server/rules.d/load.yml"
   - name: memory
     src: "templates/etc/prometheus-server/rules.d/memory.yml"
+  - name: opensmtpd
+    src: "templates/etc/prometheus-server/rules.d/opensmtpd.yml"
   - name: process
     src: "templates/etc/prometheus-server/rules.d/processes.yml"
   - name: systemd

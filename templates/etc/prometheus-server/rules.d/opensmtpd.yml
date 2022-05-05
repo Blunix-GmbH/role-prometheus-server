@@ -1,0 +1,19 @@
+groups:
+  - name: opensmtpd
+    rules:
+
+      - alert: OpenSmtpdQueue
+        expr: "opensmtpd_scheduler_envelope >= 1"
+        for: 2h
+        labels:
+          priority: P4
+        annotations:
+          summary: "{{ $value }} undeliverable emails in queue"
+
+      - alert: OpenSmtpdRunning
+        expr: "(opensmtpd_mda_running == 0) or (opensmtpd_mta_running == 0) or (opensmtpd_smtp_running == 0)"
+        for: 2h
+        labels:
+          priority: P4
+        annotations:
+          summary: "opensmtpd component not running (check smtpctl show status)"
