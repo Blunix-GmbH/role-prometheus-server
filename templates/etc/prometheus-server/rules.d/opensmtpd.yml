@@ -3,7 +3,7 @@ groups:
     rules:
 
       - alert: OpenSmtpdQueue
-        expr: "opensmtpd_scheduler_envelope >= 1"
+        expr: "opensmtpd_stat_scheduler_envelope >= 1"
         for: 2h
         labels:
           priority: P4
@@ -11,7 +11,7 @@ groups:
           summary: "{{ $value }} undeliverable emails in queue"
 
       - alert: OpenSmtpdRunning
-        expr: "(opensmtpd_mda_running == 0) or (opensmtpd_mta_running == 0) or (opensmtpd_smtp_running == 0)"
+        expr: "(opensmtpd_service_mda == 0) or (opensmtpd_mta_running == 0) or (opensmtpd_smtp_running == 0)"
         for: 2h
         labels:
           priority: P4
