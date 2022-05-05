@@ -11,7 +11,7 @@ groups:
           summary: "{{ $value }} undeliverable emails in queue"
 
       - alert: OpenSmtpdRunning
-        expr: "(opensmtpd_service_mda == 0) or (opensmtpd_mta_running == 0) or (opensmtpd_smtp_running == 0)"
+        expr: "(opensmtpd_service_mda == 0) or (opensmtpd_service_mta == 0) or (opensmtpd_service_smtp == 0)"
         for: 2h
         labels:
           priority: P4
