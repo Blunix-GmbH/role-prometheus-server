@@ -56,8 +56,8 @@ prometheus_server_rules_default:
     src: "templates/etc/prometheus-server/rules.d/cron.yml"
   - name: shorewall
     src: "templates/etc/prometheus-server/rules.d/shorewall.yml"
-  - name: github-releases
-    src: "templates/etc/prometheus-server/rules.d/github-releases.yml"
+  #- name: github-releases
+  #  src: "templates/etc/prometheus-server/rules.d/github-releases.yml"
     # blackbox exporter
   - name: ssl
     src: "templates/etc/prometheus-server/rules.d/ssl.yml"
