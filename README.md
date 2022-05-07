@@ -1,5 +1,5 @@
-# Role Prometheus
-This role installs and configures Prometheus, a Open Source Monitoring System.
+# Role Prometheus-Server
+This role installs and configures Prometheus server components. Prometheus is a Open Source Monitoring System.
 
 For usage information please refer to https://man.blunix.com/roles
 
