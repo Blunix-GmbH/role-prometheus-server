@@ -8,6 +8,6 @@ groups:
         expr: time() - borg_last_successful_backup > 100800
         for: 18h
         labels:
-          priority: P4
+          priority: P2
         annotations:
           summary: "last borg backup is older than 28 hours ({{ $value | humanizeDuration }})"

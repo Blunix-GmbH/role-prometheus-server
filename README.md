@@ -6,37 +6,17 @@ For usage information please refer to https://man.blunix.com/roles
 
 # Incident priorities
 
-P5 Informational
-  - No notification needed
-  - Show only on dashboards
-  - Examples: Actions which are regular during self healing such as failover actions
+| Priority | Description | Action |
+| --- | --- | --- |
+| P1 | Critical | Text-to-speech in [monitoring-alerts](https://git.blunix.com/miscellaneous/monitoring-alerts) |
+| P2 | High | List in [monitoring-alerts](https://git.blunix.com/miscellaneous/monitoring-alerts) but do not text-to-speech |
+| P3 | Moderate | List in [monitoring-alerts](https://git.blunix.com/miscellaneous/monitoring-alerts) `overview.py` |
+| P4 | Low | Show in webui only |
 
-P4 Low
-  - Notifications during office hours / loud hours
-  - Incidents that require manual intervention, but may wait up to one week
-  - Priority may be increased after 1 week
-  - Examples: Missed cronjobs, expiring ssl certificates, nonworking backups etc
-
-P3 Moderate
-  - Notifications during office hours immediately
-  - Notifications delayed by 3 hours between 10pm and 7am
-  - Incidents that may reduce functionality if unhandled, but should recover by self healing mechanism
-  - Example: High cpu, high load, disk space predictions, high exception count
-
-P2 High
-  - Immediate notifications 24/7
-  - Escalates to CTO after 1 hour
-  - Incidents that may have major impact to infrastructure or product
-  - Examples: TargetDown, NoTargetFound, high error count, high response times
-
-P1 Critical
-  - Immediate notifications 24/7
-  - Notifies CTO / CEO immediately
-  - Confirmed outages of product related services
-  - Examples: BlackboxProbeFailed, High amount of customer facing errors
-
-
-Interesting document on designing paging rules: https://docs.google.com/document/d/199PqyG3UsyXlwieHaqbGiWVa8eMWi8zzAn0YfcApr8Q/edit
+The variable `prometheus_exporter_node_textfile_system_priority` from [role-prometheus-exporters](https://git.blunix.com/ansible-roles/role-prometheus-exporters) overrides that value downwards. Example:  
+Check priority: 1
+System priority: 2
+Actual priority in [monitoring-alerts](https://git.blunix.com/miscellaneous/monitoring-alerts): 2
 
 
 # How to implement new collector with alerts

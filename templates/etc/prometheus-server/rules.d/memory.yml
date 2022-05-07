@@ -24,7 +24,7 @@ groups:
             / (node_memory_MemTotal) * 100)) > 98
         for: 5m
         labels:
-          priority: P3
+          priority: P2
         annotations:
           summary: "memory usage is above 98% (current value: {{ $value }})"
 
@@ -74,6 +74,6 @@ groups:
             / (node_memory_SwapTotal_bytes) * 100)) > 75
         for: 5m
         labels:
-          priority: P4
+          priority: P2
         annotations:
           summary: "swap usage is above 75% usage (current value: {{ $value }})"

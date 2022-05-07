@@ -1,5 +1,5 @@
 groups:
-  
+
   - name: apt
     rules:
 
@@ -7,7 +7,7 @@ groups:
         expr: "apt_reboot_required == 1"
         for: 1m
         labels:
-          priority: P4
+          priority: P3
         annotations:
           summary: "reboot required"
 
@@ -15,6 +15,6 @@ groups:
         expr: "apt_security_upgrades >= 1"
         for: 36h
         labels:
-          priority: P3
+          priority: P2
         annotations:
           summary: "{{ $value }} apt security upgrades to install"

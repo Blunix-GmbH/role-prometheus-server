@@ -7,7 +7,7 @@ groups:
         expr: up{job="node_exporter"} == 0
         for: 1m
         labels:
-          priority: P2
+          priority: P1
         annotations:
           summary: "target down: {{ $labels.job }}"
 

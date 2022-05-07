@@ -9,7 +9,7 @@ groups:
           < 14
         for: 1s
         labels:
-          priority: P4
+          priority: P2
         annotations:
           summary: "SSL certificate is expiring in les than 14 days (current value: {{ $value }})"
 
@@ -19,7 +19,7 @@ groups:
           < 3
         for: 1s
         labels:
-          priority: P2
+          priority: P1
         annotations:
           summary: "SSL certificate is expiring in les than 3 days (current value: {{ $value }})"
 

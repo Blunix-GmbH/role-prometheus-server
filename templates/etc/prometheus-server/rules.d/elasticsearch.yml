@@ -17,7 +17,7 @@ groups:
           by (cluster) > 0
         for: 1m
         labels:
-          priority: P4
+          priority: P3
         annotations:
           summary: "elasticsearch is yellow (cluster: {{ $labels.cluster }})"
 
@@ -37,7 +37,7 @@ groups:
           by (cluster) > 0
         for: 15m
         labels:
-          priority: P4
+          priority: P3
         annotations:
           summary: "elasticsearch cluster has shards in initializing state (cluster: {{ $labels.cluster }})"
 
@@ -47,7 +47,7 @@ groups:
           by (cluster) > 0
         for: 15m
         labels:
-          priority: P4
+          priority: P3
         annotations:
           summary: "cluster has shards in relocating state (cluster: {{ $labels.cluster }})"
 

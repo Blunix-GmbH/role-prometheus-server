@@ -11,6 +11,6 @@ groups:
           kernel_latest_patch_number > kernel_used_patch_number
         for: 1m
         labels:
-          priority: P4
+          priority: P3
         annotations:
           summary: "new kernel installed, reboot required"

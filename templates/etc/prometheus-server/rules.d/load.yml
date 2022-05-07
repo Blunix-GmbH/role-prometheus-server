@@ -11,6 +11,6 @@ groups:
           (node_cpu_seconds_total{mode="system"})) > 1
         for: 6h
         labels:
-          priority: P3
+          priority: P2
         annotations:
           summary: "average load is above threshold of 1 (current value: {{ $value }})"

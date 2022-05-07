@@ -6,7 +6,7 @@ groups:
         expr: "( ( filedescriptor_open * 100 ) / filedescriptor_max ) >= 80"
         for: 1h
         labels:
-          priority: P4
+          priority: P2
         annotations:
           summary: "available filedescriptors above 80% (current value: {{ $value }}%)"
 
@@ -14,6 +14,6 @@ groups:
         expr: "( ( filedescriptor_open * 100 ) / filedescriptor_max ) >= 99"
         for: 1m
         labels:
-          priority: P3
+          priority: P1
         annotations:
           summary: "available filedescriptors above 99% (current value: {{ $value }}%)"

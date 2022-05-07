@@ -13,7 +13,7 @@ groups:
           < 10
         for: 5m
         labels:
-          priority: P2
+          priority: P1
         annotations:
           summary: "disk {{ $labels.mountpoint }} usage is above 90% (current value: {{ $value }}%)"
 
@@ -36,6 +36,6 @@ groups:
           ((node_filesystem_files_free / node_filesystem_files) * 100) <= 10
         for: 5m
         labels:
-          priority: P2
+          priority: P1
         annotations:
           summary: "disk {{ $labels.mountpoint }} is using more than 90% inodes (current value: {{ $value }}%)"

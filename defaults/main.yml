@@ -14,8 +14,6 @@ prometheus_server_rules_default:
   - name: up
     src: "templates/etc/prometheus-server/rules.d/up.yml"
     state: present
-  - name: base
-    src: "templates/etc/prometheus-server/rules.d/base.yml"
   - name: borg
     src: "templates/etc/prometheus-server/rules.d/borg.yml"
   - name: cpu
@@ -40,6 +38,8 @@ prometheus_server_rules_default:
     # node textfilecollector scripts
   - name: ssl-certificate
     src: "templates/etc/prometheus-server/rules.d/ssl-certificate.yml"
+  - name: system-priority
+    src: "templates/etc/prometheus-server/rules.d/system-priority.yml"
   - name: entropy
     src: "templates/etc/prometheus-server/rules.d/entropy.yml"
   - name: apt

@@ -6,7 +6,7 @@ groups:
         expr: "opensmtpd_stat_scheduler_envelope >= 1"
         for: 2h
         labels:
-          priority: P4
+          priority: P1
         annotations:
           summary: "{{ $value }} undeliverable emails in queue"
 
@@ -14,6 +14,6 @@ groups:
         expr: "(opensmtpd_service_mda == 0) or (opensmtpd_service_mta == 0) or (opensmtpd_service_smtp == 0)"
         for: 2h
         labels:
-          priority: P4
+          priority: P2
         annotations:
           summary: "opensmtpd component not running (check smtpctl show status)"

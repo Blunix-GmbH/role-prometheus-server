@@ -6,6 +6,6 @@ groups:
         expr: "( ( entropy_avail * 100 ) / entropy_poolsize ) < 20"
         for: 30m
         labels:
-          priority: P4
+          priority: P3
         annotations:
           summary: "less than 20% entropy available (current value: {{ $value }})"

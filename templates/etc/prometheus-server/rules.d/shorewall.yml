@@ -7,7 +7,7 @@ groups:
         expr: "shorewall_running == 0"
         for: 1s
         labels:
-          priority: P3
+          priority: P1
         annotations:
           summary: "shorewall is not running"
 
@@ -15,6 +15,6 @@ groups:
         expr: "shorewall6_running == 0"
         for: 1s
         labels:
-          priority: P3
+          priority: P1
         annotations:
           summary: "shorewall6 is not running"
