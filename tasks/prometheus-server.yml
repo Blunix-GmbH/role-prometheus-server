@@ -19,7 +19,7 @@
     path: "{{ prometheus_server_directory }}"
     owner: prometheus-server
     group: prometheus-server
-    mode: 0750
+    mode: 0755
   with_items:
     - "/etc/prometheus-server/rules.d"
     - "/usr/local/src/prometheus-server/{{ prometheus_server_version }}/archive"
