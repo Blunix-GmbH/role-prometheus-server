@@ -3,13 +3,13 @@ groups:
   - name: apt
     rules:
 
-      - alert: AptRebootRequired
-        expr: "apt_reboot_required == 1"
-        for: 1m
-        labels:
-          priority: P3
-        annotations:
-          summary: "reboot required"
+#      - alert: AptRebootRequired
+#        expr: "apt_reboot_required == 1"
+#        for: 1m
+#        labels:
+#          priority: P3
+#        annotations:
+#          summary: "reboot required"
 
       - alert: AptSecurityUpgrades
         expr: "apt_security_upgrades >= 1"

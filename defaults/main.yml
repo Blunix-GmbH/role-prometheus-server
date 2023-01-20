@@ -44,8 +44,8 @@ prometheus_server_rules_default:
     src: "templates/etc/prometheus-server/rules.d/apt.yml"
   - name: filedescriptor
     src: "templates/etc/prometheus-server/rules.d/filedescriptor.yml"
-  - name: kernel-version
-    src: "templates/etc/prometheus-server/rules.d/kernel-version.yml"
+#  - name: kernel-version
+#    src: "templates/etc/prometheus-server/rules.d/kernel-version.yml"
   - name: ssllabs-scan
     src: "templates/etc/prometheus-server/rules.d/ssllabs-scan.yml"
   - name: dnscrypt-proxy

@@ -35,15 +35,15 @@ groups:
         annotations:
           summary: "systemd reports degraded"
 
-      - alert: SystemdTimerNotExecuted
-        expr: >-
-          (time() -
-          node_systemd_timer_last_trigger_seconds
-            {name!="systemd-readahead-done.timer"}
-          )
-          / 60 / 60 / 24 > 3
-        for: 10m
-        labels:
-          priority: P4
-        annotations:
-          summary: "systemd timer {{ $labels.name }} did not run for {{ $value }} days"
+#      - alert: SystemdTimerNotExecuted
+#        expr: >-
+#          (time() -
+#          node_systemd_timer_last_trigger_seconds
+#            {name!="systemd-readahead-done.timer"}
+#          )
+#          / 60 / 60 / 24 > 3
+#        for: 10m
+#        labels:
+#          priority: P4
+#        annotations:
+#          summary: "systemd timer {{ $labels.name }} did not run for {{ $value }} days"
