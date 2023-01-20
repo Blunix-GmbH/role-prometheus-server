@@ -1,12 +1,8 @@
 # debug, info, warn or error
 prometheus_server_log_level: "info"
-prometheus_grafana_config_log_level: "info"
-prometheus_grafana_config_port: 10002
-prometheus_grafana_config_smtp_from_address: "grafana@{{ inventory_hostname }}"
 
 prometheus_server_version: 2.20.0
 prometheus_alertmanager_version: 0.21.0
-prometheus_grafana_version: 7.1.3
 
 
 prometheus_server_rules_default:

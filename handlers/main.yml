@@ -38,10 +38,3 @@
     state: restarted
     enabled: True
   listen: restart prometheus alertmanager
-
-
-- name: restart grafana server
-  systemd:
-    name: grafana-server
-    state: restarted
-    enabled: True

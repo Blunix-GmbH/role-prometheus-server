@@ -7,8 +7,5 @@
 - name: include prometheus-alertmanager tasks
   include_tasks: prometheus-alertmanager.yml
 
-- name: include grafana-server tasks
-  include_tasks: grafana-server.yml
-
 - name: include nginx-vhost tasks
   include_tasks: nginx-vhost.yml

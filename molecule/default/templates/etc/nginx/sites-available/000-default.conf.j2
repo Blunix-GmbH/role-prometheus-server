@@ -24,9 +24,4 @@ server {
         proxy_pass http://127.0.0.1:9093/alertmanager/;
     }
 
-    location /grafana/ {
-        auth_basic off;
-        proxy_pass http://127.0.0.1:{{ prometheus_grafana_config_port }}/;
-    }
-
 }

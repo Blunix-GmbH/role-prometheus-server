@@ -64,11 +64,6 @@
 #     prometheus_alertmanager_version: 0.21.0
 #     prometheus_alertmanager_email_recipient: monitoring@blunix.org
 #
-#     # grafana-server
-#     prometheus_grafana_version: 7.1.3
-#     prometheus_grafana_config_secret_key: QXKkXTnYStkGNEbep78lxXaPme89pFs6Jwc0TaW
-#     prometheus_grafana_config_smtp_from_address: "grafana@example.com"
-#
 #     # blunix.role-nginx
 #     prometheus_nginx_server_name: "_"
 #     prometheus_nginx_listen: "0.0.0.0"
