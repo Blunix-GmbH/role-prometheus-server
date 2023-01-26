@@ -2,14 +2,6 @@ groups:
   - name: cron
     rules:
 
-      - alert: CronUnmonitored
-        expr: "cron_unmonitored >= 1"
-        for: 1m
-        labels:
-          priority: P3
-        annotations:
-          summary: "{{ $value }} unmonitored cronjobs for user {{ $labels.user }}"
-
       - alert: CronDuration
         expr: "cron_duration >= 3600"
         for: 1m
