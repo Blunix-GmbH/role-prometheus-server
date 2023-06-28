@@ -27,13 +27,13 @@ groups:
         annotations:
           summary: "systemd timers {{ $labels.name }} is inactive"
 
-      - alert: SystemdSystemRunning
-        expr: node_systemd_system_running == 0
-        for: 10m
-        labels:
-          priority: P3
-        annotations:
-          summary: "systemd reports degraded"
+#      - alert: SystemdSystemRunning
+#        expr: node_systemd_system_running == 0
+#        for: 10m
+#        labels:
+#          priority: P3
+#        annotations:
+#          summary: "systemd reports degraded"
 
 #      - alert: SystemdTimerNotExecuted
 #        expr: >-
