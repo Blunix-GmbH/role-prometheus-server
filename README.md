@@ -1,25 +1,31 @@
-# Role Prometheus-Server
-This role installs and configures Prometheus server components. Prometheus is a Open Source Monitoring System.
+# blunix.role-prometheus-server
+This Ansible role installs and configures prometheus-server.
 
-For usage information please refer to https://man.blunix.com/roles
+This role is part of the Blunix hosting stack. Documentation is available at <a href="https://www.blunix.com/manual" target="_blank">https://www.blunix.com/manual</a>.
+
+
+# Mirror to github
+This repository is mirrored from <a href="https://git.blunix.com/ansible-roles/" target="_blank">https://git.blunix.com/ansible-roles/</a> to github.com/Blunix-GmbH/.
 
 
 # Author Information
-This role is part of *Blunix* - a full stack hosting system automated with Ansible.
-Blunix GmbH provides services and support for fully fully automated hosting environments,
-continuous integration/deployment/delivery and various Linux and open-source technology stacks.
+Blunix GmbH
+
+`root@linux:~# Consulting | Hosting | Training`
+
+Blunix GmbH provides 24/7/365 Linux emergency consulting and support, Service Level Agreements for Debian Linux managed hosting using Ansible Configuration Management as well as Linux trainings and workshops.
 
 ```
-Blunix GmbH - Consulting for Linux Hosting 24/7
+Blunix GmbH
 Glogauer Straße 21
 10999 Berlin
 Germany
 
 Website: https://www.blunix.com
-E-Mail:  contact@blunix.com
-gpg key: https://www.blunix.com/contact-blunix-com-gpg-key
+Contact: https://www.blunix.com#contact
 ```
-
 
 # License
 Apache-2.0
+
+Please refer to the LICENSE file in the root of this repository.
